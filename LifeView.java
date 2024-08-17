@@ -6,6 +6,7 @@ public class LifeView extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 	private static int SIZE = 60;
+    private Color currentColor = Color.BLUE;
 
 	/** store a reference to the current state of the grid */
     private LifeCell[][] grid;
@@ -37,7 +38,7 @@ public class LifeView extends JPanel
                 if (grid[r][c] != null)
                 {
                     if ( grid[r][c].isAliveNow() )
-                        g.setColor( Color.BLUE );
+                        g.setColor( currentColor );
                     else
                         g.setColor( new Color(235,235,255) );
 
@@ -45,5 +46,13 @@ public class LifeView extends JPanel
                 }
             }
         }
+    }
+
+    public void randomizeColors()
+    {
+        currentColor = new Color( (int)(Math.random()*256), 
+                                  (int)(Math.random()*256), 
+                                  (int)(Math.random()*256) );
+        repaint();
     }
 }

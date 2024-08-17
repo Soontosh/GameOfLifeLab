@@ -21,7 +21,7 @@ class Life extends JFrame implements ActionListener
 	private static final long serialVersionUID = 1L;
 	private LifeView view;
 	private LifeModel model;
-	private JButton runButton, pauseButton, resumeButton;
+	private JButton runButton, pauseButton, resumeButton, restartButton, randomizeColorsButton;
 
 	/** construct a randomized starting grid */
 	Life() throws IOException
@@ -41,14 +41,26 @@ class Life extends JFrame implements ActionListener
 		runButton.addActionListener(this);
 		runButton.setEnabled(true);
 		controlPanel.add(runButton);
+
 		pauseButton = new JButton("Pause");
 		pauseButton.addActionListener(this);
 		pauseButton.setEnabled(false);
 		controlPanel.add(pauseButton);
+
 		resumeButton = new JButton("Resume");
 		resumeButton.addActionListener(this);
 		resumeButton.setEnabled(false);
 		controlPanel.add(resumeButton);
+
+		restartButton = new JButton("Restart");
+		restartButton.addActionListener(this);
+		restartButton.setEnabled(true);
+		controlPanel.add(restartButton);
+
+		randomizeColorsButton = new JButton("Randomize Colors");
+		randomizeColorsButton.addActionListener(this);
+		randomizeColorsButton.setEnabled(true);
+		controlPanel.add(randomizeColorsButton);
 
 		// build the view
 		view = new LifeView();
@@ -86,6 +98,18 @@ class Life extends JFrame implements ActionListener
 			runButton.setEnabled(false);
 			pauseButton.setEnabled(true);
 			resumeButton.setEnabled(false);
+		} else if ( b == restartButton )
+		{
+			model.restart();
+
+			if (model.timer != null) {
+				runButton.setEnabled(false);
+				pauseButton.setEnabled(false);
+				resumeButton.setEnabled(true);
+			}
+		} else if ( b == randomizeColorsButton )
+		{
+			view.randomizeColors();
 		}
 	}
 	

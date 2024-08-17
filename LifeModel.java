@@ -15,45 +15,19 @@ public class LifeModel implements ActionListener
 
     private static int SIZE = 60;
     private LifeCell[][] grid;
+    private String fileName;
     
+    public Timer timer;
     LifeView myView;
-    Timer timer;
 
     /** Construct a new model using a particular file */
     public LifeModel(LifeView view, String fileName) throws IOException
     {       
-        int r, c;
-        grid = new LifeCell[SIZE][SIZE];
-        for ( r = 0; r < SIZE; r++ )
-            for ( c = 0; c < SIZE; c++ )
-                grid[r][c] = new LifeCell();
-
-        if ( fileName == null ) //use random population
-        {                                           
-            for ( r = 0; r < SIZE; r++ )
-            {
-                for ( c = 0; c < SIZE; c++ )
-                {
-                    if ( Math.random() > 0.85) //15% chance of a cell starting alive
-                        grid[r][c].setAliveNow(true);
-                }
-            }
-        }
-        else
-        {                 
-            Scanner input = new Scanner(new File(fileName));
-            int numInitialCells = input.nextInt();
-            for (int count=0; count<numInitialCells; count++)
-            {
-                r = input.nextInt();
-                c = input.nextInt();
-                grid[r][c].setAliveNow(true);
-            }
-            input.close();
-        }
+        this.fileName = fileName;
 
         myView = view;
-        myView.updateView(grid);
+
+        restart();
 
     }
 
@@ -73,6 +47,56 @@ public class LifeModel implements ActionListener
     public void resume()
     {
         timer.restart();
+    }
+
+    /** restart the simulation **/
+    public void restart()
+    {
+        if (timer != null) {
+            timer.stop();
+        }
+
+
+        int r, c;
+        grid = new LifeCell[SIZE][SIZE];
+        for ( r = 0; r < SIZE; r++ )
+            for ( c = 0; c < SIZE; c++ )
+                grid[r][c] = new LifeCell();
+
+        if ( fileName == null ) //use random population
+        {                                           
+            for ( r = 0; r < SIZE; r++ )
+            {
+                for ( c = 0; c < SIZE; c++ )
+                {
+                    if ( Math.random() > 0.85) //15% chance of a cell starting alive
+                        grid[r][c].setAliveNow(true);
+                }
+            }
+        }
+        else
+        {        
+            try {
+                Scanner input = new Scanner(new File(fileName));
+                int numInitialCells = input.nextInt();
+                for (int count=0; count<numInitialCells; count++)
+                {
+                    r = input.nextInt();
+                    c = input.nextInt();
+                    grid[r][c].setAliveNow(true);
+                }
+                input.close();
+            } catch (Exception e) {
+                System.out.println("Error reading from file: " + fileName + ". Reverting to random population.");
+                fileName = null;
+                restart();
+            }
+        }
+
+        myView.updateView(grid);
+
+        timer = new Timer(50, this);
+        timer.setCoalesce(true);
     }
     
     /** run the simulation (the pause button in the GUI */
